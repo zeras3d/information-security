@@ -1,0 +1,40 @@
+bandit0: bandit0 name parol yazib giririk
+bandit1: 
+ls  ( readme )
+cat readme
+bandit2:
+ls (fayl adi -)
+cat ./- (./ ve ya -- bunlar ferqli simvolla baslayan fayllari oxumaq ucundur)
+bandit3:
+ls (fayl cixirki --spaces in this filename--)
+cat "./--spaces in this filename--"
+bandit4:
+ls  (inhere)
+ls -la (inheredeki gizli fayllari gormek ucun)
+cat ./...Hiding-From-You
+bandit5:
+ls
+cd inhere
+ls 
+cat ./-file0*
+bandit6:
+cd inhere
+ls  (icinde maybehere fayllari var)
+find -readable -size 1033c
+cat ./maybehere07/.file2
+bandit7:
+somewhere on the server dediyi ucun / burada olanlari axtarmaliyig
+find / -user bandit7 -group bandit6 -size 33c
+bize error fayllarinda verdiyi ucun
+find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
+bandit8:
+grep millionth data.txt
+bandit9:
+sort data.txt | uniq -u
+sort ardicilliqla duzur uniq birlesdirir u tek olanlari gosterir d yazsaydiq tekrarlananalar
+bandit10:
+strings data.txt | grep =
+strings fayldan human readbale line tapib cixardir
+bandit11:
+base 64 ile encode edilibse onu decode etmek lazimdir
+cat data.txt | base64 -d
