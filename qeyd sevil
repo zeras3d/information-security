@@ -1,0 +1,743 @@
+cmd-de girmek ucun 
+ssh bandit0@bandit.labs.overthewire.org -p 2220 
+
+home directory dedikde bandit3@bandit hissesinde ls edib fayllara baxiriq 
+
+amma meselen inhere directory dedikde
+bandit3@bandit:~/inhere$
+
+bunun icindekini nezerde tutur
+level 1-2
+1) Niyə - fayl adı xüsusi görünür?
+
+- sadəcə bir simvoldur — amma əksər Unix/Linux proqramlarında tək tire (-) xüsusi mənaya malikdir: o, adətən “stdin” (standard input — proqramın standart daxil olan axını) demək üçün istifadə olunur.
+Məsələn cat - yazsan, cat fayl adının yerinə gələn tire-ni fayl yox, klaviaturadan gələn məlumat kimi oxuyacaq — yəni cat sənə yazdığını geri göstərəcək və ya başqa bir əmrlə birləşdiriləndə əmrin axınına qoşulacaq.
+
+Bu səbəbdən faylın adı əslində - olsa da, cat - yazmaq faylı oxumayacaq — o, --ı xüsusi simvol kimi başa düşür.
+
+
+
+cat — faylın içini ekrana çıxaran proqram.
+
+cat ./- faylı düzgün oxuyur — çünki sən xüsusi mənanı ləğv edib fayla tam yol göstərmisən.
+
+2) cat -- - — bu nə deməkdir? (izah)
+
+Komanda: cat -- -
+
+-- — çox yayılmış POSIX konvensiyası: -- əmrdə opsiyonların (flags) sonunu bildirir. Yəni bundan sonra gələn hər şey opsiyon hesab edilməyəcək, hamısı fayl adıdır.
+
+- — bu halda artıq fayl adı kimi qəbul olunur (stdin kimi yox).
+
+Nəticə: cat -- - da cat ./- ilə eyni işi görür — - adlı faylı oxuyur. Hər iki üsul etibarlıdır. -- bəzi vəziyyətlərdə daha qısa və aydın ola bilər.
+
+level 2-3
+ls- filelari gosterir hansi ki onlar hidden deyil 
+
+file adini yazib tab edende tamamlayir 
+
+donma varsa ctrl c edirik bir iki defe duzelir
+
+
+
+level 3-4
+evvelce ls edib file goruruk icine girmek ucun cd istifade edirik
+
+cd → qovluğa keçmək
+
+ls -a → gizli faylları görmək (hidden file)
+
+cat ./ → faylı oxumaq
+
+
+level 4-5
+ls edib inhere goruruk cd edib icine giririk, daha sonra ls edib icindeki fayllara baxiriq
+
+ll- kimler fayllara gire biler gore bilirik 
+file ./-file* -- butun faylarin data tipini goruruk 
+human-readable olan ASCII di 
+
+level 5-6 
+cd inhere, ls edirik sonra olcusunu tapmaq ucun 
+
+1)find . -type f -size 1033c ! -executable
+
+find . — cari qovluqdan başlayaraq bütün alt qovluqları axtarır.
+
+-type f — yalnız faylları tap.
+
+-size 1033c — ölçüsü 1033 bayt (byte) olan faylları seçir. (c = bytes)
+
+Çıxışda faylın yolu görünəcək (məs: ./maybehere07/.hidden)
+
+
+2)Faylın növünü yoxla (human-readable olub olmadığını görmək üçün):
+
+file ./maybehere07/.hidden
+
+
+Nəticədə ASCII text və ya UTF-8 text görünürsə, fayl oxuna biləndir.
+
+3)Faylı oxu və parolu götür:
+
+cat ./maybehere07/.hidden
+
+
+
+
+
+level 6-7 
+1)find ilə faylı tap:
+
+find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
+
+
+/ → bütün serveri axtar
+
+-user bandit7 → istifadəçi sahibi bandit7
+
+-group bandit6 → qrup sahibi bandit6
+
+-size 33c → ölçüsü 33 byte
+
+2>/dev/null → icazəsiz qovluqlardan gələn səhvləri gizlədir
+
+2)Faylın içini oxu:
+
+cat /tapdığın/fayl/yolu
+
+
+/tapdığın/fayl/yolu → find nəticəsində çıxan faylın tam yolu
+
+İçindəki sətir paroldur — onu yadda saxla
+
+
+
+level 7-8 
+1)data.txt faylını yoxla:
+
+ls -l data.txt
+
+
+Fayl var mı, ölçüsü və icazələrini görmək üçün
+
+2)millionth sözünü tap:
+
+grep "millionth" data.txt
+
+
+grep faylda bu sözü axtarır və sətiri çıxarır
+
+Sətirdə yanında parol olacaq
+
+----Əgər çox sətir çıxırsa (daha təmiz çıxarmaq üçün):
+
+grep "millionth" data.txt | tr -d '[:space:]'
+
+
+tr -d '[:space:]' boşluqları silir və parolu təmiz göstərir
+
+
+
+
+level 8-9 
+Addım-addım həll
+
+1)data.txt faylını yoxla:
+
+ls
+
+
+Faylın mövcudluğunu və ölçüsünü görmək üçün
+
+2)Yalnız bir dəfə olan sətiri tap:
+
+sort data.txt | uniq -u
+
+
+sort data.txt → sətirləri sıralayır
+
+uniq -u → yalnız bir dəfə təkrarlanan sətirləri göstərir
+
+Nəticədə parolu görəcəksən
+
+
+
+level 9-10 
+1)İnsan oxuya bilən sətirləri çıxar:
+
+strings data.txt
+
+
+strings binary və ya qarışıq fayldan yalnız oxunaqlı mətnləri çıxarır
+
+2) “===” ilə başlayan sətri tap:
+
+strings data.txt | grep "==="
+
+
+grep "===" → yalnız === ilə başlayan sətri göstərir
+
+Sətirdə parol bu simvollardan sonra olacaq
+
+
+
+
+
+level 10-11
+ls et data.txt gor daha sonra 
+1) Base64-i deşifr et və çıxışı ekrana ver:
+
+base64 -d data.txt
+# və ya (əgər sistemdə --decode yoxdursa)
+base64 --decode data.txt
+
+
+Niyə: bu əmrlə base64 kodlanmış mətn adi mətnə çevrilir və ekrana yazılır.
+
+Nəticə faylda qarışıq və ya binary çıxsa, əvvəlcə fayla yazıb sonra strings ilə yoxla:
+
+base64 -d data.txt > decoded.txt
+strings decoded.txt
+# və ya sadəcə
+base64 -d data.txt | strings
+
+
+
+
+level 11-12 
+1)strings data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+
+
+2)diger usul 
+Nəticəni fayla yazmaq istəsən:
+
+cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m' > decoded.txt
+less decoded.txt
+
+
+Niyə: decoded.txt-də rahat oxuyub parolu kopyalamağın asan olur.  
+
+----> tr — translate (tərcümə) komandasıdır: girişdən gələn simvolları bir dəstdən başqa bir dəstə çevirir.
+
+Sintaksis: tr <from> <to>
+
+'A-Za-z' → bu mənbə dəstidir: A-dan Z-ə (böyük hərflər) və a-dan z-ə (kiçik hərflər).
+
+'N-ZA-Mn-za-m' → bu təyinat (target) dəstidir: ROT13 uyğunluğunu göstərir.
+
+Böyük hərflər üçün: N→Z sonra A→M (yəni A→N, B→O, … M→Z, N→A, … Z→M).A-dan 13 herif sonra N gelir bu rotate 13 ucundur 
+
+Kiçik hərflər üçün: n→z sonra a→m (a→n, b→o, … m→z, n→a, … z→m).
+
+Niyə belə yazılır? tr soldakı simvolları sırayla sağdakılarla yerdəyişdirir. ROT13 üçün hərfləri 13 mövqe döndürməliyik, ona görə N-ZA-M (böyük) və n-za-m (kiçik) şəklində yazılır.
+
+
+
+
+
+LEVEL 12-13
+ls
+cat data.txt
+
+yeni qovluq yaradırıq
+mkdir /tmp/yeniqovluq
+data.txt faylını yeni qovluğa kopyalayırıq
+cp data.txt /tmp/yeniqovluq/data
+yeni qovluğa keçirik
+cd /tmp/yeniqovluq
+
+xxd -r data.txt > data 
+
+rm data.txt 
+
+data faylı haqqında məlumata baxırıq
+file data
+Fayllarla iş
+Gzip
+file data
+mv data data.gz
+gunzip data.gz
+Tar
+file data
+mv data data.tar
+tar -xf data.tar
+Bzip2
+file data
+mv data data.bz2
+bzip2 -d data.bz2
+
+
+
+
+
+
+data.txt readable deyil deye Readable qovluq yaradiriq mkdir vasitesiyle tmp icinde. ve cp vasitesile copy edirik txt faylini ve qovlugun icine atiriq 
+sonra cd ile yaratdigimiz faylin icine girirk
+daha sonra meqsed txt faylini hex formadan executable formaya cevirmek olur, convert etmek ucun xxd -r emrinden istidade edirik
+xxd -r data.txt > data
+daha sonra ls edib baxiriq ve 
+data data.txt 
+fayli goruruk, uje bize data.txt lazim deyil deye onu remove
+rm data.txt 
+edirik. 
+
+bandit12@bandit:/tmp/sevil4321$ file data
+data: gzip compressed data, was "data2.bin", last modified: Tue Oct 14 09:26:00 2025, max compression, from Unix, original size modulo 2^32 572 
+
+gzip fayli oldugunu goruruk ve biz data faylini data.gz a convert edirik 
+
+mv data data.gz
+
+gzip arxiv fayllarla islmek ucundu ve gzipi unzip etmek ucun 
+
+gunzip data.gz 
+
+edirik ve ls edib yeni fayla baxiriq
+
+bandit12@bandit:/tmp/sevil4321$ file data
+data: bzip2 compressed data, block size = 900k
+  file baxiriq ve bu defe bzip2 formatinda oldugunu goruruk 
+
+ve onu data dan data.bzip2 formatina ceviriik
+
+mv data data.bzip2
+
+bzip faylini extract etmek ucun ise 
+bzip2 -d data.bzip2
+
+edirik ve ls edib fayli gorenden sonra file data ile indi hansi formada oldguna baxrq
+
+bandit12@bandit:/tmp/sevil4321$ mv data.bzip2.out data.gzip
+bandit12@bandit:/tmp/sevil4321$ gunzip data.gzip
+gzip: data.gzip: unknown suffix -- ignored
+bandit12@bandit:/tmp/sevil4321$ mv data.gzip data.gz
+bandit12@bandit:/tmp/sevil4321$ gunzip data.gz
+bandit12@bandit:/tmp/sevil4321$ ls
+data
+bandit12@bandit:/tmp/sevil4321$ file data
+data: POSIX tar archive (GNU)
+bandit12@bandit:/tmp/sevil4321$ mv data data.tar
+bandit12@bandit:/tmp/sevil4321$ tar -xf data.tar
+bandit12@bandit:/tmp/sevil4321$ ls
+data6.bin  data.tar
+bandit12@bandit:/tmp/sevil4321$ rm data.tar
+bandit12@bandit:/tmp/sevil4321$ mv data6.bin data.tar
+bandit12@bandit:/tmp/sevil4321$ tar -xf data.tar
+bandit12@bandit:/tmp/sevil4321$ ls
+data8.bin  data.tar
+bandit12@bandit:/tmp/sevil4321$ rm data.tar
+bandit12@bandit:/tmp/sevil4321$ file data8.bin
+data8.bin: gzip compressed data, was "data9.bin", last modified: Tue Oct 14 09:26:00 2025, max compression, from Unix, original size modulo 2^32 49
+bandit12@bandit:/tmp/sevil4321$ mv data.tar data.gz
+mv: cannot stat 'data.tar': No such file or directory
+bandit12@bandit:/tmp/sevil4321$ mv data8.bin data.gz
+bandit12@bandit:/tmp/sevil4321$ gunzip data.gz
+bandit12@bandit:/tmp/sevil4321$ ls
+data
+bandit12@bandit:/tmp/sevil4321$ file data
+data: ASCII text
+bandit12@bandit:/tmp/sevil4321$ cd data
+-bash: cd: data: Not a directory
+bandit12@bandit:/tmp/sevil4321$ cat data
+
+
+
+
+
+LEVEL 13-14
+deyir ki /etc qovlugunun icinde /bandit_pass qovlugu var 
+/etc/bandit_pass 
+bandit14 fayli var ve onu yalniz bandit14 useri ile oxuya bilerik
+ll edib qovluga baxanda butun userlerin permissionlarini gore bilerik meselen 
+
+
+1-ci usul -
+evvelce sshkey.privatenin icinde olan keyi gotur ve desktopda fayl yaradib icine elave et 
+daha sonra gitbash-da cd desktop et ve 
+
+chmod 600 file_adi 
+
+yaz. bu fayl icazelerini duzletmek ucundu
+daha sonra 
+
+ssh -i ssh.private bandit14@bandit.labs.overthewire.org -p 2220
+burda bandit14-e girecek ve 
+
+cat /etc/bandit_pass/bandit14 
+
+acib icindeki kodu gpturuuk
+
+
+usul 2
+bandit13@bandit:/etc/bandit_pass$ cat bandit13
+FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn
+bandit13@bandit:/etc/bandit_pass$ cat bandit14
+cat: bandit14: Permission denied
+
+14-e girmeye bandit13-un permissionu yoxdu. o zaman bize vericdlen ssh key olur ondan istifade edib servere qosula bilerik
+etc/
+
+bandit13@bandit:/etc/bandit_pass$ cd ~/
+bandit13@bandit:~$ ll
+total 24
+drwxr-xr-x   2 root     root     4096 Oct 14 09:26 ./
+drwxr-xr-x 150 root     root     4096 Oct 14 09:29 ../
+-rw-r--r--   1 root     root      220 Mar 31  2024 .bash_logout
+-rw-r--r--   1 root     root     3851 Oct 14 09:19 .bashrc
+-rw-r--r--   1 root     root      807 Mar 31  2024 .profile
+-rw-r-----   1 bandit14 bandit13 1679 Oct 14 09:26 sshkey.private
+    
+
+burda bize verilen sshkey.private di 
+
+bundan sonra 
+
+ssh bandit14@bandit.labs.overthewire.org -p 2220 
+
+yazirdiq hemise giris ucun amma bu defe parolumuz yoxdu deye
+
+ssh -i sshkey.private bandit14@bandit.labs.overthewire.org -p 2220 
+ 
+sonra bandit 14 e girir ve bize demisdiki cd etc/bandit_pass/ 
+qovlugunun icinde olan bandit14 faylindadi
+
+
+
+
+LEVEL 14-15
+Novbeti passw cari hostun 30000- ci portundadi
+ curret levele baxmaq ucun 
+
+ssh localhost -p 30000
+
+gorurukki baglidi ve bizde nc den istofade edirik (nc — "Swiss Army knife" kimi sadə TCP/UDP alətidir: əlaqə açmaq, dinləmək, fayl ötürmək, port yoxlamaq, HTTP sorğu göndərmək və s. üçün istifadə olunur.)
+
+nc localhost 30000
+
+ve bizden current level parol isteyir onu da yaziriq ve novbeti level parolu verir 
+
+
+
+LEVEL 15-16 
+biz ssl ile hansisa hostu acmaq isteyirikse 
+
+openssl s_client -connect localhost:30001
+
+ve bizden cari parolu isteyir onu yaziriq 
+
+Niyə openssl s_client lazım olur, nc yox?
+
+nc plain TCP üçün yaxşıdır. Əgər server TLS üzərində işləyirsə, nc ilə qoşulmaq sənə şifrələnmiş kanal açmaz — openssl s_client isə bu şifrəli kanalı təmin edir. Ona görə TLS serverlərə test və interaktiv yazışma üçün openssl s_client istifadə olunur
+
+LEVEL 16-17 
+31000 ve 32000 -ci portlar arasinda bir dene host var ssl ucun aciqdi biz ona qosulub tapmaliyiq
+
+nmap -A localhost -p 31000-32000 
+OR
+nmap -sV -T4 localhost -p 31000-32000
+
+
+
+portlari skan edir ve bize ssl olanlar lazimdi
+ssl-e qosulmaq ucun 
+
+
+-sV — xidməti/versiyanı aşkar etməyə çalışır (məsələn “ssl/echo” kimi).
+-T4 — skanı sürətləndirir.
+
+
+openssl s_client -connect localhost:31790
+
+
+ilə qoşulub həmin parolu göndərdin.
+
+Server “Correct!” dedi və sənə RSA private key qaytardı — yəni bu xidmət düzgün port idi və cavab olaraq növbəti səviyyədə istifadə olunacaq ssh private key verdi.
+
+Private key-i fayla yazmaq — harada və necə
+Çox vaxt ev qovluğunda yazmağa icazən olmur, ona görə /tmp kimi müvəqqəti qovluqda işləyirsən:
+
+  
+bandit16@bandit:~$ cd /tmp
+bandit16@bandit:/tmp$ mkdir svl123
+bandit16@bandit:/tmp$ cd svl123
+bandit16@bandit:/tmp/svl123$ vim lab17.private 
+
+i düyməsinə bas — indi yazmağa başlaya bilərsən.
+Mətn yaz və ya yapışdır:
+Əgər vim sistem clipboard ilə qurulubsa, normal rejimdə "+p ilə sistem clipboard-dakı mətni yapışdırmaq olar.
+
+Yazmanı saxla və normal rejimə qayıt:
+Esc bas — insert rejimindən çıxıb normal rejimə qayıdırsan.
+Faylı saxla və çıx (write & quit):
+:wq
+Yazdıqdan sonra : yaz, sonra wq və Enter.
+
+ve ya cixmaq ucun 
+:q! → çıx, dəyişiklikləri atmadan
+
+giris icazesini almaq uun 
+
+chmod 600 lab17.private 
+
+
+
+daha sonra lab17.private file istifade edib ssh qosulmaq isteyirik 
+
+ ssh -i lab17.private bandit17@bandit.labs.overthewire.org -p 2220  
+
+
+ve bandit 17 giririk
+
+
+bandit17@bandit:~$ cat /etc/bandit_pass/bandit17
+ acib parolu gotururuk 
+
+
+
+
+
+
+
+
+
+
+
+LEVEL 17-18 
+iki file var password.new ve password.old. Deyir ki next level pass-i password.new icindedi amma password.old - dan ferqli olan cerge 
+
+diff password.new passsword.old 
+
+ikisini bir birinden ferqlendireni tapmaq ucundur 
+
+iki parol verdi bize ve deyir eger duz etmisizse 18-e girende bye-bye sozunu goreceksiz 
+
+
+
+
+LEVEL 18-19
+next pass readme faylindadi,amma kimse .bashrc faylinda SSH ile bagli seyleri deyisdirib deye sisteme gire bilmirem ve bize bye-bye deyr.
+	I usul
+Eslinde bu o demekdir ki qosulur. Login olanda .bashrc faylini oxuyur eger o deyisibse login ola bilmirik amma bezi emrleri login kodu ile yaza bilriik dirnaq icinde 
+Yeni sisteme daxil olmaq isteyirikse ve daxil olmamisdan evvel HER HANSI LINUX EMRLERINI YERINE yetire bilirik 
+
+ssh bandit18@bandit.labs.overthewire.org -p 2220 "ls" 
+readme faylini gosterir
+
+ssh bandit18@bandit.labs.overthewire.org -p 2220 "cat readme"
+parolu gosterir 
+
+
+        II usul
+bash scripti ignore etmek isteyirikse -t ve bash-in ignoru ucun 
+"/bin/sh" yaziriq 
+
+ssh -t bandit18@bandit.labs.overthewire.org -p 2220 "/bin/sh"
+
+$ isaresi gelir ve onunla ls edib yada cat readme edib baxiriq
+
+
+
+LEVEL 19-20
+bildiyimiz kimi butun banditlerin parolu /etc/bandit_pass/ qovlugundadi 
+
+setuid nədir? 
+setuid bir proqram işə düşəndə proqramı işə salan istifadəçi deyil, proqramın sahibi (məsələn root və ya başqa user) kimi işləməsini təmin edən icazə bayrağıdır.
+Niyə vacibdir? 
+Bu sayədə normal user-in edə bilmədiyi işləri (məs. xüsusi faylı oxumaq) o proqram vasitəsilə icra etmək olar — proqram sahibi kimi
+
+bandit19@bandit:~$ ./bandit20-do whoami
+bandit20
+bandit19@bandit:~$ whoami
+bandit19
+
+yeni bu ./bandit20 id ile girdikde bizi bandit20 kimi gosterir
+
+
+
+bandit19@bandit:/etc/bandit_pass$ cat bandit19
+cGWpMaKXVwDUNgPAVJbWYuGHVn9zl3j8
+bandit19@bandit:/etc/bandit_pass$ cat bandit20
+cat: bandit20: Permission denied
+bandit19@bandit:/etc/bandit_pass$ cd ~/
+bandit19@bandit:~$ ls
+bandit20-do
+bandit19@bandit:~$ ./bandit20-do
+Run a command as another user.
+  Example: ./bandit20-do whoami
+bandit19@bandit:~$ ./bandit20-do id
+uid=11019(bandit19) gid=11019(bandit19) euid=11020(bandit20) groups=11019(bandit19)
+bandit19@bandit:~$ ./bandit20-do cat /etc/bandit_pass/bandit20
+0qXahG8ZjOVMN9Ghs7iOWsCfZyXOUbYO
+
+
+homedirectory bandit20-do proqramı sənin əmrinlə işləyəndə bandit20 kimi davranır, ona görə həmin proqram vasitəsilə /etc/bandit_pass/bandit20-i oxuda bildin.
+ buna gore script bandit20-do ile bandit20 kimi davrana bilirik 
+
+
+
+LEVEL 20-21
+Burda artiq iki terminaldan istifade edirik, birinde nc ile port ve parolu yazib digerinden bize verilen setuid ile hemin portu oxusaq birinci terminalda bize next level parolu atacaq
+Her hansi portu acmaq ucun 
+nc 
+den istifade edirik 
+-l ile portu aciriq 
+nc -l 
+
+echo -n '0qXahG8ZjOVMN9Ghs7iOWsCfZyXOUbYO' | nc -l -p 9980 &
+
+
+echo -n '0qXahG8ZjOVMN9Ghs7iOWsCfZyXOUbYO'
+— həmin mətn sətrini sonunda yeni sətir (\n) olmadan çıxışa yazır. (-n olmazsa sonunda \n əlavə olunur.)
+| — pipe: echo-in çıxışını nc-nin girişinə yönləndirir.
+nc -l -p 9980
+— nc (netcat) burada dinləyici server kimi işləyir: -l dinləmə rejimi, -p 9980 isə hansı portda dinləyəcəyini göstərir. Yəni kimsə localhost:9980-a qoşulduqda ona echo-un verdiyi mətn göndəriləcək.
+& — bu əmri background-da işə salır, yəni terminalı bloklamır və sən başqa əmrlər verə bilirsən.
+  dirnaq icindeki current level paroldu 
+daha sonra diger terminalda 
+
+./suconnect 9980
+
+edirik ve birinci terminalda next level parolu gelir 
+
+
+
+
+
+
+LEVEL 21-22
+cron automatically yenilenmedi
+bize deyir ki /etc/cron.d qovlugunun icindedi bizim parolumuz.
+qovlugun icine girib ll edende goruruk ki bandit22 fayli var(bize lazim olan 22-nin parolduu)
+
+ cat cronbjob_bandit22 
+
+edirik. sonra goruruk ki bandit22 useri ile 
+/usr/bin/cronjob_bandit22.sh 
+scripti acir. cat edib bu bunu da aciriq ve icinde goruruk ki chmod ile icazesini deyisib daha sonra cat ile ordan cixan neticeni fayli diger /tmp/ icine yazib 
+
+crontab guru saytinda orda verilen ulduza gore nece deqiqeden bir yenilendiyini tapa bilerik 
+
+ve tmp qovlugundakini cat edib parolu goruruk 
+
+II USUL 
+***** bu her 1 deqiqeden bir yenilenmedi,yeni biz /tmp/t7061ds9SORqQh  olani bir deqiqe icinde aca bilmesek yenilenme olacaq yeniden baslamali olacuq. buna gore de 
+
+mkdir /tmp/sevil8 
+qovlugu yaradib 
+
+cat /tmp/t7061ds9SORqQh > /tmp/sevil8/file
+
+yaratdigim qovluq icinde olan file-a yazirq ve artiq ehtiyyac olmur bir deqiqeden bir telesmeye, bu kodlari ayrica not-da yazib sonra cmd atmaq mesleehtdi 
+
+
+LEVEL 22-23
+bize verilen /etc/cron.d/ qovluguna giririk. ve ll edib cronjob_bandit23 faylini goruruk ve cat edib onu aciriq ve hemcinin onun icinde olan /usr/bin/... faylinida aciriq 
+bandit22@bandit:~$ cd /etc/cron.d/ 
+
+bandit22@bandit:/etc/cron.d$ ls
+
+behemoth4_cleanup  cronjob_bandit22  cronjob_bandit24  leviathan5_cleanup    otw-tmp-dir
+clean_tmp          cronjob_bandit23  e2scrub_all       manpage3_resetpw_job  sysstat
+
+bandit22@bandit:/etc/cron.d$ cat cronjob_bandit23
+@reboot bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+* * * * * bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+
+bandit22@bandit:/etc/cron.d$ cat /usr/bin/cronjob_bandit23.sh
+#!/bin/bash   --shellde yazildigini gosterir 
+myname=$(whoami)
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+echo "Copying passwordfile /etc/bandit_pass/$myname to /tmp/$mytarget"
+
+esas is bundan sonra baslayir goruruki parolu  /tmp/$mytarget"
+ adli bir deyisene $mytarget -e yazir 
+
+biz deyisen yarada bilerik
+
+bandit22@bandit:/etc/cron.d$ myname=test
+bandit22@bandit:/etc/cron.d$ echo $myname
+test
+
+ve deyisene ekrana echo ile cixardiq. bunu demek meqsedimiz cronjobun icindeki yazini ozumuz deyisecik deyedi
+burda bandit23 ozu faylin icine baxanda goruruk ki mytarget adinda deyisen yaradir
+
+myname=$(whoami) 
+
+buna baxaq burda bandit23 faylinin icindeyik deye demeli whoami bandit23du ve myname deyisenimizde bandit23du
+
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+yeni biz indi ekrana 
+
+bandit22@bandit:/etc/cron.d$ echo I am user bandit23
+I am user bandit23
+
+bandit22@bandit:/etc/cron.d$ echo I am user bandit23 | md5sum
+8ca319486bfbbc3663ea0fbe81326349  - 
+
+bandit22@bandit:/etc/cron.d$ echo I am user bandit23 | md5sum |cut -d ' ' -f 1
+8ca319486bfbbc3663ea0fbe81326349 
+ 
+bele bir 8ca319486bfbbc3663ea0fbe81326349  deyisen yaratdi 
+
+demeli  mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+neticesi olaraq mytarget=8ca319486bfbbc3663ea0fbe81326349  
+bu olur ve biz demisdikki parolu /tmp/$mytarget icine yazib 
+
+bandit22@bandit:/etc/cron.d$ cat /tmp/8ca319486bfbbc3663ea0fbe81326349
+0Zf11ioIjMVN551jX3CmStKLYqjk54Ga
+
+parolu verir 
+
+
+
+
+
+LEVEL 23-24
+bandit23@bandit:~$  cd /etc/cron.d/
+bandit23@bandit:/etc/cron.d$ ll 
+
+bandit23@bandit:/etc/cron.d$ cat cronjob_bandit24
+@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+
+bandit23@bandit:/etc/cron.d$ cat /usr/bin/cronjob_bandit24.sh
+#!/bin/bash     -(shellde yazilib)
+
+myname=$(whoami)      -(myname=bandit24)
+
+cd /var/spool/$myname/foo     -(ic-ice qovludu ona girib) (/var/spool/bandit24/foo)(bu qovluga bandit23-le gie bilmirik) 
+
+echo "Executing and deleting all scripts in /var/spool/$myname/foo:"
+for i in * .*;
+do
+    if [ "$i" != "." -a "$i" != ".." ];   (.-cari qovluq ..-bir evvelki qovluq) deyilse
+    then
+        echo "Handling $i"
+        owner="$(stat --format "%U" ./$i)"
+        if [ "${owner}" = "bandit23" ]; then    (owner=bandit23duse)
+            timeout -s 9 60 ./$i
+        fi
+        rm -f ./$i
+    fi
+done
+
+
+
+
+bandit23@bandit:/etc/cron.d$ mkdir /tmp/exam/
+bandit23@bandit:/etc/cron.d$ touch /tmp/exam/pass.sh 
+
+
+icine yaziriq
+bandit23@bandit:/etc/cron.d$ cat > /tmp/exam/pass.sh
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/exam/pass.txt 
+
+
+bandit23@bandit:/etc/cron.d$ chmod 777 /tmp/exam/pass.sh
+
+
+bandit23@bandit:/tmp/exam$ cat pass.txt 
