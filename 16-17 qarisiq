@@ -1,0 +1,8 @@
+16-17
+nmap localhost -p 31000-32000
+openssl s_client -connect localhost:31790
+printf 'kohne sifre' | openssl ... yuxaridaki kod -quiet
+desktop usulu 
+exit
+ls mv mykey.private.txt. mykey.private
+ssh -i mykey.private bandit17@ .... 
